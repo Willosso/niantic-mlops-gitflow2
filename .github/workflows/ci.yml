@@ -1,0 +1,49 @@
+name: ci-cd
+on:
+  push:
+    branches: [develop, "release/**", "hotfix/**"]
+    tags: ["v*"]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test:                     # 1. Commit -> pruebas unitarias
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install pytest
+      - run: pytest -q
+
+  quality-gate:             # 2. Validación del modelo: si falla, se bloquea el despliegue
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: PYTHONPATH=src python -m niantic_mlops.quality_gate data/candidate_metrics.json
+
+  build:                    # 3. Build Docker (modelo + dependencias + API)
+    needs: quality-gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t niantic-churn-api:${{ github.sha }} .
+
+  staging:                  # 4. Staging en release/* y hotfix/*
+    if: startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/hotfix/')
+    needs: build
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - run: echo "desplegar en staging y ejecutar criterios de aceptación Given-When-Then"
+
+  production:               # 5. Producción solo con tag vX.Y.Z sobre main y aprobación del Business Owner
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - run: echo "kubectl rollout (3 réplicas, canary 10 %) y smoke test /health"
