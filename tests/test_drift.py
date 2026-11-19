@@ -16,7 +16,15 @@ def test_psi_ambar_en_semana_5():
     assert semaforo_psi(cargar_semanas(DATA)[4]["psi"]) == "ámbar"
 
 
-def test_regla_original_solo_salta_en_semana_7():
+def _acciones():
     semanas = cargar_semanas(DATA)
-    alertas = [int(f["semana"]) for i, f in enumerate(semanas) if decidir(f, semanas[i - 1] if i else None) == "HOTFIX"]
-    assert alertas == [7]
+    return [decidir(f, semanas[i - 1] if i else None) for i, f in enumerate(semanas)]
+
+
+def test_regla_multiseñal_adelanta_el_reentrenamiento_a_la_semana_5():
+    assert _acciones() == ["OK", "OK", "OK", "AVISO", "REENTRENAR", "HOTFIX", "HOTFIX", "OK"]
+
+
+def test_la_alerta_roja_llega_una_semana_antes_que_con_la_regla_original():
+    acciones = _acciones()
+    assert acciones.index("HOTFIX") + 1 == 6  # antes: semana 7 (solo PSI > 0,20)
