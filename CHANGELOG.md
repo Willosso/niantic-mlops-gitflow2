@@ -1,5 +1,8 @@
 # Changelog
 
+## [3.0.0-rc1] - en preparación (release/v3.0)
+- Candidato VPS Failure Predictor v3.0. Pendiente de staging y aprobación del Business Owner.
+
 ## [2.0.1] - 2026-11-19 (hotfix/v2.0.1)
 - Modelo de churn reentrenado con ventana ampliada (métricas de la semana 8: accuracy 93, precision 91, recall 90, F1 90).
 - Regla de disparo multiseñal: AVISO / REENTRENAR / HOTFIX. El reentrenamiento salta en la semana 5 y la alerta roja en la 6 (antes, semana 7).
