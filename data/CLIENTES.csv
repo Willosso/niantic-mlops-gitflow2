@@ -1,0 +1,9 @@
+cliente_id,cliente,sector,pais,fecha_alta,segmento
+C001,Exxon Energy,Energía,USA,2023-01-10,Platinum
+C002,RoboLogistics,Logística,Alemania,2024-02-15,Gold
+C003,SmartFactory,Industria,España,2023-09-01,Gold
+C004,CityVision,Smart Cities,Francia,2025-01-12,Silver
+C005,AeroDrone,Drones,Reino Unido,2024-06-20,Platinum
+C006,MobilityX,Automoción,Italia,2025-03-11,Silver
+C007,GeoScan Ltd,Cartografía,Canadá,2022-08-03,Gold
+C008,VisionAI,IA,Suecia,2024-07-22,Platinum
